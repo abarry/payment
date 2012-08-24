@@ -1,0 +1,6 @@
+[submodule "plugins/sfPropelORMPlugin"]
+	path = plugins/sfPropelORMPlugin
+	url = git://github.com/propelorm/sfPropelORMPlugin.git
+[submodule "lib/vendor/ExtraPropertiesBehavior"]
+	path = lib/vendor/ExtraPropertiesBehavior
+	url = git://github.com/Carpe-Hora/ExtraPropertiesBehavior.git

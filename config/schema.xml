@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<database name="propel" defaultIdMethod="native" package="lib.model.payment">
+
+  <table name="user">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="reference" type="varchar" size="255" required="true" />
+    <column name="type" type="char" size="30" />
+
+    <unique>
+      <unique-column name="reference" />
+    </unique>
+
+    <behavior name="timestampable" />
+  </table>
+
+  <table name="credit_card">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="alias" type="varchar" required="true" size="255" />
+    <column name="brand" type="char" required="true" size="20" />
+    <column name="number" type="varchar" required="true" size="255" />
+    <column name="expires_at" type="varchar" required="true" size="4" />
+    <column name="owner" type="varchar" required="true" size="255" />
+    <column name="is_selected" type="boolean" required="false" size="20" default="false" />
+
+    <column name="user_id" type="integer" required="true" />
+
+    <unique>
+        <unique-column name="alias" />
+        <unique-column name="number" />
+    </unique>
+
+    <foreign-key foreignTable="user" onDelete="CASCADE">
+      <reference local="user_id" foreign="id" />
+    </foreign-key>
+  </table>
+
+  <table name="order">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="reference" type="varchar" required="false" size="45" />
+    <column name="amount" type="decimal" sqlType='DECIMAL(10,2)' />
+    <column name="hash" type="varchar" required="true" size="255" />
+    <column name="user_id" type="integer" required="false" />
+    <column name="seller_psp_configuration_id" type="integer" required="true" />
+
+    <unique>
+        <unique-column name="hash" />
+    </unique>
+
+    <behavior name="timestampable" />
+    <behavior name="extra_properties" />
+
+    <foreign-key foreignTable="seller_psp_configuration" onDelete="CASCADE">
+      <reference local="seller_psp_configuration_id" foreign="id" />
+    </foreign-key>
+  </table>
+
+  <table name="transaction">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="reference" type="varchar" required="true" size="45" />
+    <column name="taxes" type="decimal" sqlType='DECIMAL(10,2)' />
+    <column name="currency" type="varchar" required="true" size="45" />
+    <column name="status" type="varchar" required="true" size="45" />
+    <column name="is_processed" type="boolean" required="true" default="false"/>
+    <column name="order_id" type="integer" required="true" />
+    <unique>
+        <unique-column name="reference" />
+    </unique>
+
+    <behavior name="timestampable" />
+    <behavior name="extra_properties" />
+
+    <foreign-key foreignTable="order" onDelete="CASCADE">
+      <reference local="order_id" foreign="id" />
+    </foreign-key>
+  </table>
+
+
+  <table name="seller_psp_configuration">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="seller_id" type="integer" required="true" />
+    <column name="psp_name" type="varchar" size="255" required="true" />
+    <column name="service_type" type="varchar" size="45" default="pme" required="true" />
+    <column name="psp_configuration" type="object" required="true" />
+
+    <behavior name="timestampable" />
+
+    <foreign-key foreignTable="seller" onDelete="CASCADE">
+      <reference local="seller_id" foreign="id" />
+    </foreign-key>
+  </table>
+
+  <table name="seller">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="name" type="varchar" required="true" size="100" />
+    <column name="description" type="longvarchar" />
+    <column name="ident" type="varchar" required="true" size="50" description="The private api username" />
+    <column name="sha_key" type="varchar" required="true" size="50" description="The private api sha_key" />
+    <behavior name="timestampable" />
+    <behavior name="sluggable">
+        <parameter name="slug_column" value="slugged_name" />
+        <parameter name="slug_pattern" value="{Name}" />
+    </behavior>
+  </table>
+
+  <table name="template">
+    <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="name" type="varchar" size="45" required="true" />
+    <column name="content" type="clob" required="false" />
+    <column name="subject" type="clob" required="false" />
+    <column name="seller_psp_configuration_id" type="integer" required="true" />
+    <behavior name="timestampable" />
+    <foreign-key foreignTable="seller_psp_configuration" onDelete="CASCADE">
+      <reference local="seller_psp_configuration_id" foreign="id" />
+    </foreign-key>
+  </table>
+
+</database>
